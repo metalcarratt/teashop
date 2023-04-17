@@ -25,14 +25,20 @@ const location = () => props.location;
 <style scope>
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
-img.location {
-    height: 600px;
+.container {
+    height: fit-content;
+    border: 4px double #730273;
+    box-sizing: border-box;
 }
 
-.container {
-    height: 647px;
-    border: 4px double #730273;
-    /* position: relative; */
+@media only screen and (max-width: 650px) {
+    .container {
+        width: 100%;
+    }
+
+    img.location {
+        width: 100%;
+    }
 }
 
 .container:hover {
@@ -52,12 +58,13 @@ img.location {
 
 .inner {
     position: relative;
+    height: 100%;
 }
 
 .overlay {
     position: absolute;
     top: 0;
-    height: 600px;
+    height: 100%;
     width: 100%;
 }
 </style>

@@ -38,6 +38,12 @@ img.character {
     display: block;
 }
 
+@media only screen and (max-width: 462px) {
+    /* img.character {
+        width: 100%;
+    } */
+}
+
 .blinking {
     font-size: 14px;
     float: right;
