@@ -1,27 +1,40 @@
 <template>
     <div class="shop">
         <h2>Granny's Herbs</h2>
+        <div class="purse">Purse: {{ printMoney(purse) }}</div>
         <div class="wares">
             <span class="item" v-for="(item, index) in wares" :key="index">
                 <img :src="item.image" />
                 <label>{{ item.name }}: {{  item.cost }}c</label>
-                <div class="buy">
+                <div class="cart">
                     <a href="#" @click.prevent="returnItem(item)">-</a>
                     <span class="quantity">{{ item.quantity }}</span>
                     <a href="#" @click.prevent="takeItem(item)">+</a>
                 </div>
             </span>
         </div>
-        <div class="total">
-            <span>
-                Total: {{ printTotal() }}
-            </span>
+        <div class="bottom-section">
+            
+            <div class="total">
+                <span :class="notEnoughMoney() ? 'overdraft' : ''">
+                    Total: {{ printMoney(total) }}
+                </span>
+            </div>
+            <div>
+                <span class="warning" v-if="warning">
+                    <img :src="profile()" /> {{ warning }} <span class="blinking">▶</span>
+                </span>
+                <button class="buy" @click="buy">Buy It!</button>
+            </div>
+            
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+
+const purse = ref(1000);
 
 const wares = ref([{
     name: 'Black tea leaves',
@@ -32,21 +45,27 @@ const wares = ref([{
 
 const total = ref(0);
 
+const warning = ref('');
+
 const takeItem = (item) => {
     item.quantity++;
     total.value += item.cost;
 }
 
 const returnItem = (item) => {
-    item.quantity--;
-    total.value -= item.cost;
+    if (item.quantity > 0) {
+        item.quantity--;
+        total.value -= item.cost;
+    }
 }
 
-const printTotal = () => {
+const notEnoughMoney = () => total.value > purse.value;
+
+const printMoney = (money) => {
     let text = '';
 
-    const dollars = parseInt(total.value / 100);
-    const cents = total.value % 100;
+    const dollars = parseInt(money / 100);
+    const cents = money % 100;
 
     if (dollars > 0) {
         text += `$${dollars}`;
@@ -61,6 +80,14 @@ const printTotal = () => {
     
     return text;
 }
+
+const buy = () => {
+    if (wares.value.find(item => item.name === 'Black tea leaves').quantity !== 4) {
+        warning.value = "Let's buy four 'Black tea leaves'!";
+    }
+}
+
+const profile = () => './profile-warning.png';
 </script>
 
 <style scoped>
@@ -106,7 +133,7 @@ const printTotal = () => {
     filter: drop-shadow(0 0 10px #fabdb9);
 }
 
-.wares .item .buy a {
+.wares .item .cart a {
     color: yellow;
     font-size: 50px;
     text-decoration: none;
@@ -115,27 +142,94 @@ const printTotal = () => {
     padding-right: 16px;
 }
 
-.wares .item .buy a:hover {
+.wares .item .cart a:hover {
     text-shadow: 0px 0px 5px white;
 }
 
-.wares .item .buy .quantity {
+.wares .item .cart .quantity {
     font-size: 40px;
     color: white;
     text-shadow: 0px 0px 1px black;
 }
 
-.total {
+.bottom-section {
     margin-top: auto;
+    align-self: flex-end;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.warning {
+    display: inline-block;
+    align-self: flex-end;
+    background-color: #fffdf4;
+    padding: 4px 8px;
+    border: 1px solid black;
+    border-radius: 8px;
+    margin-right: 16px;
+    vertical-align: bottom;
+}
+
+.warning img {
+    width: 40px;
+    border: 1px solid black;
+    border-radius: 25px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.total {
     color: white;
     font-size: 40px;
     text-shadow: 0px 0px 1px black;
-    align-self: flex-end;
     border-top: 5px solid yellow;
     border-bottom: 15px double yellow;
     padding-left: 16px;
     padding-right: 8px;
-    margin-right: 8px;
     margin-bottom: 8px;
+}
+
+.total .overdraft {
+    color: #e54c4c;
+}
+
+.purse {
+    align-self: flex-end;
+    margin-right: 8px;
+    font-size: 40px;
+    color: white;
+    text-shadow: 0px 0px 1px black;
+}
+
+.buy {
+    font-family: 'Itim', cursive;
+    font-size: 30px;
+    padding: 4px;
+    width: 200px;
+    margin-top: 12px;
+    background-color: yellow;
+    border: 1px solid yellow;
+    filter: drop-shadow(0 0 2px black);
+    color: #3e3e04;
+}
+
+.buy:hover {
+    cursor: pointer;
+    filter: drop-shadow(0 0 4px white);
+}
+
+.blinking {
+    animation: blinker 1.5s linear infinite;
+    margin-left: 8px;
+    color: #777741;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }
 </style>
