@@ -3,18 +3,8 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
 import OutsideShop from './OutsideShop.vue';
 
-onMounted(() => {
-  this.$imagePreload([
-    './owner.png',
-    './owner-surprised.png',
-    './herblady.png',
-    './teashop_outside_1.jpg',
-    './herb_store.jpg'
-  ]);
-})
 </script>
 
 <style>
