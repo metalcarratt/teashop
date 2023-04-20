@@ -1,15 +1,16 @@
 import { Ref, ref } from 'vue';
-import { Script } from './types';
+import { Character, Script } from './types';
 
 const dialogueIndex = ref(0);
 let script: Script = [];
 
 const at = ref('');
 const say = ref('');
-const who: Ref<Record<string, string>> = ref({});
+const who: Ref<Character | null> = ref(null);
 const emo = ref('normal');
 
 const process = () => {
+    // console.log(`dialogueIndex: ${dialogueIndex.value}`);
     const scene = script[dialogueIndex.value];
     if (scene.at) {
         at.value = scene.at;
@@ -27,13 +28,14 @@ const process = () => {
 }
 
 export const ScriptRunner = {
-    character: () => who.value[emo.value],
+    character: () => who.value,
+    emo: () => emo.value,
     location: () => at.value,
     words: () => say.value,
-    height: () => who.value.height,
 
     init(_script: Script) {
         script = _script;
+        dialogueIndex.value = 0;
         process();
     },
 

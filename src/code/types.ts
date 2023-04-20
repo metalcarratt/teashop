@@ -1,7 +1,8 @@
 export type Character = {
     normal: string,
     surprised?: string,
-    height: string
+    height: string,
+    left: string
 }
 
 export type Scene = {

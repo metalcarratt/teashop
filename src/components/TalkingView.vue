@@ -1,17 +1,24 @@
 <template>
-    
-    <span class="talking">
-        “{{ props.words }}” 
-        <span class="blinking">◀</span>
+    <span>
+        <span class="talking">
+            “{{ props.words }}” 
+            <span class="blinking">◀</span>
+        </span>
+        <img class="character" :style="`height: ${props.character.height}; left: ${props.character.left}`" :src="character()" />
     </span>
-    <img class="character" :style="`height: ${props.height}`" :src="character()" />
 </template>
 
 <script setup>
 import { defineProps } from 'vue';
-const props = defineProps(['character', 'words', 'height']);
+import { Character as CT } from '@/code/types';
 
-const character = () => props.character;
+const props = defineProps({
+    'character': CT,
+    'words': String,
+    'emo': String
+});
+
+const character = () => props.character[props.emo];
 </script>
 
 <style scoped>

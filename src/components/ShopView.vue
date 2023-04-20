@@ -1,7 +1,7 @@
 <template>
     <div class="shop">
         <h2>Granny's Herbs</h2>
-        <div class="purse">Purse: {{ printMoney(purse) }}</div>
+        <div class="purse">Purse: {{ printMoney(inventory.purse()) }}</div>
         <div class="wares">
             <span class="item" v-for="(item, index) in wares" :key="index">
                 <img :src="item.image" />
@@ -32,9 +32,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
+import { inventory } from '../code/inventory';
 
-const purse = ref(1000);
+const emit = defineEmits(['finished']);
 
 const wares = ref([{
     name: 'Black tea leaves',
@@ -59,7 +60,7 @@ const returnItem = (item) => {
     }
 }
 
-const notEnoughMoney = () => total.value > purse.value;
+const notEnoughMoney = () => total.value > inventory.purse();
 
 const printMoney = (money) => {
     let text = '';
@@ -84,6 +85,17 @@ const printMoney = (money) => {
 const buy = () => {
     if (wares.value.find(item => item.name === 'Black tea leaves').quantity !== 4) {
         warning.value = "Let's buy four 'Black tea leaves'!";
+    } else {
+        inventory.spend(total.value);
+        const items = {};
+        for (const ware of wares.value) {
+            if (ware.quantity > 0) {
+                items[ware.name] = ware.quantity;
+            }
+        }
+        inventory.addItems(items);
+        // leave shop
+        emit('finished');
     }
 }
 
